@@ -62,7 +62,9 @@ class Game
       @activeObject.updatePosition()
     @activeObject.updateMeshPositions()
 
-
-  activeObjectIsLegal: ->
+  rotate: (direction) ->
+    return if not @activeObject?
+    if @activeObject.rotate(direction)
+      @activeObject.updateMeshPositions()
 
 window.Game = Game

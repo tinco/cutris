@@ -16,6 +16,7 @@ class Cube
 window.Cube = Cube
 
 class Shape
+  size: 3
   constructor: (@position,@field) ->
     @blockShape = []
     for row,i in @originalShape()
@@ -54,6 +55,26 @@ class Shape
         return false
     return true
 
+  rotate: (direction) ->
+    @[direction]()
+
+  yaw: ->
+    yaw = =>
+      rotated = []
+      for i in [0..(@size - 1)]
+        rotated[i] = []
+        for j in [0..(@size - 1)]
+          newX = @size - j - 1
+          rotated[i][j] = @blockShape[@size - j - 1][i]
+      @blockShape = rotated
+
+    yaw()
+    if !@updatePosition()
+      yaw() for [0..2]
+      @updatePosition()
+      return false
+    else
+      return true
 
   updateMeshPositions: () ->
     DX = -(2 * Graphics.BLOCK_SIZE)
@@ -93,6 +114,7 @@ class LShape extends Shape
   originalShape: -> [
       [1,1,1]
       [1,0,0]
+      [0,0,0]
     ]
 
 window.LShape = LShape
