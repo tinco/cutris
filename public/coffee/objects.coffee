@@ -12,22 +12,50 @@ class Cube
       cubeMaterial
     )
     @mesh.cube = @
-    @position = {}
-
-  updatePosition: () ->
-    @mesh.position = @position
-
+    @position = {x:0,y:0,z:0}
 window.Cube = Cube
 
 class Shape
-  constructor: (@position) ->
-    for row in @blockShape
-      for bit,i in row
+  constructor: (@position,@field) ->
+    @blockShape = []
+    for row,i in @originalShape()
+      @blockShape[i] = []
+      for bit,j in row
         if bit == 1
-          row[i] = new Cube()
-    @updatePosition()
+          @blockShape[i][j] = new Cube()
+        else
+          @blockShape[i][j] = 0
 
-  updatePosition: () ->
+    @updatePosition()
+    @updateMeshPositions()
+
+  updatePosition: ->
+    for row,i in @blockShape
+      for cube,j in row
+        if cube != 0
+          p = cube.position
+          @field[p.x]?[p.y]?[p.z] = null
+          p.x = @position.x + j
+          p.y = @position.y + i
+          p.z = @position.z
+
+    for block in @blocks()
+      position = block.position
+      if position.x == -1 ||
+         position.y == -1 ||
+         position.z == -1 ||
+         position.x == Game.WIDTH  ||
+         position.y == Game.HEIGHT ||
+         position.z == Game.DEPTH
+        return false
+      if not @field[position.x][position.y][position.z]?
+        @field[position.x][position.y][position.z] = cube
+      else
+        return false
+    return true
+
+
+  updateMeshPositions: () ->
     DX = -(2 * Graphics.BLOCK_SIZE)
     DY = (2 * Graphics.BLOCK_SIZE)
     DZ = -((Game.DEPTH - 1) * Graphics.BLOCK_SIZE)
@@ -35,10 +63,17 @@ class Shape
     for row,i in @blockShape
       for cube,j in row
         if cube != 0
-          cube.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
-          cube.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
-          cube.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
-          cube.updatePosition()
+          cube.mesh.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
+          cube.mesh.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
+          cube.mesh.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
+
+  blocks: ->
+    blocks = []
+    for row, i in @blockShape
+      for cube,j in row
+        if cube != 0
+          blocks.push cube
+    blocks
 
   addToScene: (@scene) ->
     for row in @blockShape
@@ -55,7 +90,7 @@ class Shape
 window.Shape = Shape
 
 class LShape extends Shape
-  blockShape: [
+  originalShape: -> [
       [1,1,1]
       [1,0,0]
     ]

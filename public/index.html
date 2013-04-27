@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>
@@ -9,27 +10,30 @@
 <div id="cutris">
 </div>
 </body>
-<script src="js/three.min.js" >
-</script>
-<script src="js/coffee-script.min.js" >
-</script>
-<script src="js/PlayingFieldGeometry.js">
-</script>
+
+<script src="js/three.min.js" ></script>
+<script src="js/coffee-script.min.js" ></script>
+<script src="js/keyboard.js"></script>
+<script src="js/PlayingFieldGeometry.js"></script>
 <script src="coffee/graphics.coffee" type="text/coffeescript"></script>
 <script src="coffee/game.coffee" type="text/coffeescript"></script>
 <script src="coffee/objects.coffee" type="text/coffeescript"></script>
+
 <script type="text/coffeescript">
-
-window.inspect = (obj) ->
- for k,p of obj
-   console.log("k: " + k + ' v: ' + p)
-   
-
 window.game = new Game()
 window.graphics = new Graphics(game)
-graphics.nextStep()
-graphics.render()
+game.graphics = graphics
+graphics.animate()
+game.start()
 
+KeyboardJS.on('up', -> game.move('up'))
+KeyboardJS.on('down', -> game.move('down'))
+KeyboardJS.on('left', -> game.move('left'))
+KeyboardJS.on('right', -> game.move('right'))
+KeyboardJS.on('a', -> game.rotate('roll'))
+KeyboardJS.on('s', -> game.rotate('yaw'))
+KeyboardJS.on('d', -> game.rotate('pitch'))
+KeyboardJS.on('enter', -> game.place())
 
 </script>
 </html>

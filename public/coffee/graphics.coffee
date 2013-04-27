@@ -33,6 +33,10 @@ class Graphics
     @drawPlayingField()
     @render()
 
+  animate: () ->
+    @render()
+    requestAnimationFrame => @animate()
+
   render: ->
     @renderer.render(@scene,@camera)
 
@@ -46,17 +50,16 @@ class Graphics
 
     # Then we build our current objects
     @objects = {}
-    for depth in @game.playingField
-      for k,object of depth
-        @objects[object] = object
+    for object in @game.playingField
+      @objects[object.id] = object
 
     # Then we check if any of them are new
     for k,object of @objects
-      if not previous[object]?
+      if not previous[object.id]?
         object.addToScene(@scene)
     # Then we iterate over the old ones, to see if they're still there
     for k,object of previous
-      if not @objects[object]?
+      if not @objects[object.id]?
         object.removeFromScene(@scene)
     # Done for now
 
