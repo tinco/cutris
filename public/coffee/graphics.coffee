@@ -6,6 +6,8 @@ class Graphics
   NEAR = 0.1
   FAR = 10000
 
+  @BLOCK_SIZE = 50
+
   constructor: (game)->
     @game = game
     @renderer = new THREE.WebGLRenderer()
@@ -25,7 +27,8 @@ class Graphics
     container = document.getElementById('cutris')
     container.appendChild(@renderer.domElement)
 
-    @drawLshape()
+    @objects = {}
+
     @addLight()
     @drawPlayingField()
     @render()
@@ -33,29 +36,29 @@ class Graphics
   render: ->
     @renderer.render(@scene,@camera)
 
-  drawCube: (size, position)->
-    width = height = depth = size
-    widthSegments = depthSegments = heightSegments = 1
+  nextStep: ->
+    # I want.. that every next step, we check wether
+    # there are any new objects, and we add them to the scene
+    # then we check if there are any objects no longer in the game
+    # and we remove them from the scene.
+    # So first we store our previous objects
+    previous = @objects
 
-    cubeMaterial =
-      new THREE.MeshLambertMaterial(color: 0x0033FF)
+    # Then we build our current objects
+    @objects = {}
+    for depth in @game.playingField
+      for k,object of depth
+        @objects[object] = object
 
-    cubeMaterial.opacity = 0.8
-
-    cube = new THREE.Mesh(
-      new THREE.CubeGeometry(width,width,width,1,1,1),
-      cubeMaterial
-    )
-
-    cube.position = position
-
-    @scene.add(cube)
-
-  drawLshape: ->
-    @drawCube(50, x: 0, y: 0, z:0)
-    @drawCube(50, x: 50, y: 0, z:0)
-    @drawCube(50, x: -50, y: 0, z:0)
-    @drawCube(50, x: -50, y: -50, z:0)
+    # Then we check if any of them are new
+    for k,object of @objects
+      if not previous[object]?
+        object.addToScene(@scene)
+    # Then we iterate over the old ones, to see if they're still there
+    for k,object of previous
+      if not @objects[object]?
+        object.removeFromScene(@scene)
+    # Done for now
 
   addLight: ->
     pointLight = new THREE.PointLight(0xFFFFFF)

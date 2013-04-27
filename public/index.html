@@ -17,10 +17,19 @@
 </script>
 <script src="coffee/graphics.coffee" type="text/coffeescript"></script>
 <script src="coffee/game.coffee" type="text/coffeescript"></script>
+<script src="coffee/objects.coffee" type="text/coffeescript"></script>
 <script type="text/coffeescript">
 
-game = new Game()
-graphics = new Graphics(game)
+window.inspect = (obj) ->
+ for k,p of obj
+   console.log("k: " + k + ' v: ' + p)
+   
+
+window.game = new Game()
+window.graphics = new Graphics(game)
+graphics.nextStep()
+graphics.render()
+
 
 </script>
 </html>
