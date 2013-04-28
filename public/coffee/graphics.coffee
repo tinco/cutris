@@ -1,6 +1,6 @@
 class Graphics
-  WIDTH = 800
-  HEIGHT = 600
+  WIDTH = window.innerWidth
+  HEIGHT = window.innerHeight
   VIEW_ANGLE = 45
   ASPECT = WIDTH / HEIGHT
   NEAR = 0.1
@@ -32,6 +32,13 @@ class Graphics
     @addLight()
     @drawPlayingField()
     @render()
+
+  watchWindow: ->
+    resized = =>
+      @renderer.setSize(window.innerWidth, window.innerHeight)
+      @camera.aspect = window.innerWidth / window.innerHeight
+      @camera.updateProjectionMatrix()
+    window.addEventListener('resize', resized, false)
 
   animate: () ->
     @render()

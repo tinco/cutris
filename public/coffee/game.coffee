@@ -22,7 +22,7 @@ class Game
   playSound: (name) ->
     new Audio('sound/' + name + '.ogg').play()
 
-  nextStep: ->
+  nextStep: (placing) ->
     if not @activeObject?
       shapeClass = Shapes[Math.floor(Math.random() * Shapes.length)]
       newObject = new shapeClass({x: 1, y: 1, z: 12}, @blocks,true)
@@ -30,6 +30,7 @@ class Game
       @lastObjectId += 1
       @activeObject = newObject
       @playingField[newObject.id] = newObject
+      @playSound('beep')
     else
       p = @activeObject.position
       if not @activeObject.tryPosition({x: p.x, y: p.y, z: p.z-1})
@@ -41,6 +42,7 @@ class Game
         if p.z == Game.DEPTH - 1
           @gameOver = true
       else
+        @playSound('beep') unless placing
         @activeObject.updateMeshPositions()
 
   score: 0
@@ -75,7 +77,7 @@ class Game
   place: ->
     return if @gameOver
     while @activeObject?
-      @nextStep()
+      @nextStep(true)
     @resolveScore()
     @updateScoreBoard()
 

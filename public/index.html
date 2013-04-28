@@ -4,10 +4,48 @@
 <title>
     Cutris
 </title>
+<link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+<style type="text/css">
+html, body, div, canvas {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    color: #229999;
+}
+
+#info {
+  position: absolute;
+  display: block;
+  text-align: center;
+  bottom: 3em;
+  right: 5em;
+}
+
+h1 {
+  font-size: 18pt;
+}
+
+#cutris {
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  margin: 0;
+}
+</style>
 </head>
 <body>
-<h1>Cutris</h1>
-<h2>Score: <span id="score">0</div></h2>
+<div id="info">
+  <h2>Score: <span id="score">0</div></h2>
+</div>
 <div id="cutris">
 </div>
 </body>
@@ -25,6 +63,7 @@ window.game = new Game()
 window.graphics = new Graphics(game)
 game.graphics = graphics
 graphics.animate()
+graphics.watchWindow()
 game.start()
 
 KeyboardJS.on('up', -> game.move('up'))
