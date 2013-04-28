@@ -13,6 +13,15 @@ class Cube
     )
     @mesh.cube = @
     @position = {x:0,y:0,z:0}
+
+  updateMeshPosition: ->
+    DX = -(2 * Graphics.BLOCK_SIZE)
+    DY = (2 * Graphics.BLOCK_SIZE)
+    DZ = -((Game.DEPTH - 1) * Graphics.BLOCK_SIZE)
+
+    @mesh.position.x = DX + @position.x * Graphics.BLOCK_SIZE
+    @mesh.position.y = DY + @position.y * -Graphics.BLOCK_SIZE
+    @mesh.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
 window.Cube = Cube
 
 class Shape

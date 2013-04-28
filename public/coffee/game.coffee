@@ -49,9 +49,11 @@ class Game
           @graphics.scene.remove(cube.mesh)
           @blocks[x][y][depth] = undefined
 
-          for z in [(depth + 1)...@DEPTH]
-            if cube = @blocks[x][y][z]
+          for z in [(depth+1)...@DEPTH]
+            cube = @blocks[x][y][z]
+            if cube?
               cube.position.z -= 1
+              cube.updateMeshPosition()
               @blocks[x][y][z] = undefined
               @blocks[x][y][z-1] = cube
 
