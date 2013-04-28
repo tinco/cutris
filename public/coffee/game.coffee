@@ -21,7 +21,7 @@ class Game
 
   nextStep: ->
     if not @activeObject?
-      newObject = new LShape({x: 1, y: 1, z: 12}, @blocks)
+      newObject = new LShape({x: 1, y: 1, z: 12}, @blocks,true)
       newObject.id = @lastObjectId
       @lastObjectId += 1
       @activeObject = newObject
@@ -29,6 +29,8 @@ class Game
     else
       p = @activeObject.position
       if not @activeObject.tryPosition({x: p.x, y: p.y, z: p.z-1})
+        @activeObject.active = false
+        @activeObject.updateMeshPositions()
         @activeObject = undefined
         @score += 1
       else

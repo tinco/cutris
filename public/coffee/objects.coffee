@@ -1,5 +1,6 @@
 class Cube
   @MaterialForDepth = []
+  @ActiveMaterialForDepth = []
   @Colors = []
 
   for h in [0..5]
@@ -8,11 +9,15 @@ class Cube
 
   for depth in [0..Game.DEPTH]
     @MaterialForDepth[depth] = new THREE.MeshLambertMaterial(
-      color: @Colors[depth % @Colors.length],
+      color: @Colors[depth % @Colors.length]
       wireframe: false
     )
+    @ActiveMaterialForDepth[depth] = @MaterialForDepth[depth].clone()
+    @ActiveMaterialForDepth[depth].transparent = true
+    @ActiveMaterialForDepth[depth].opacity = 0.8
 
-  constructor: ->
+
+  constructor: (@active)->
     size = Graphics.BLOCK_SIZE
 
     cubeMaterial =
@@ -35,18 +40,22 @@ class Cube
     @mesh.position.x = DX + @position.x * Graphics.BLOCK_SIZE
     @mesh.position.y = DY + @position.y * -Graphics.BLOCK_SIZE
     @mesh.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
-    @mesh.material = Cube.MaterialForDepth[@position.z]
+    if @active
+      @mesh.material = Cube.ActiveMaterialForDepth[@position.z]
+    else
+      @mesh.material = Cube.MaterialForDepth[@position.z]
+
 window.Cube = Cube
 
 class Shape
   size: 3
-  constructor: (@position,@field) ->
+  constructor: (@position,@field,@active) ->
     @blockShape = []
     for row,i in @originalShape()
       @blockShape[i] = []
       for bit,j in row
         if bit == 1
-          @blockShape[i][j] = [0, new Cube(),0]
+          @blockShape[i][j] = [0, new Cube(@active),0]
         else
           @blockShape[i][j] = [0,0,0]
 
@@ -192,6 +201,7 @@ class Shape
 
   updateMeshPositions: () ->
     for block in @blocks()
+      block.active = @active
       block.updateMeshPosition()
 
   _blocks: null
