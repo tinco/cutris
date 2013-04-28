@@ -49,8 +49,10 @@ h3 {
 
 #end {
   display: none;
+}
+
+.message {
   width: 30em;
-  height: 10em;
 
   background-color: white;
   border: 2px solid #229999;
@@ -65,12 +67,25 @@ h3 {
 </style>
 </head>
 <body>
-<div id="end">
+<div class="message" id="end">
   <h2>Game Over</h2>
   <h3>Well played, you scored: <span class="score">0</span> points!</h3>
   <div class="restart">
-    <a href="/">play again</a>
+    <a href="/?again">play again</a>
   </div>
+</div>
+<div class="message" id="begin">
+  <h2>Cutris</h2>
+  <p>
+    This game is a 3D tetris (or Blockout) variant. Move the block around
+    with the arrow keys. Rotate the block by pressing 'a', 's' or 'd'.      
+  </p>
+  <p>
+    You can quickly place a block by pressing 'space'.
+  </p>
+  <p>
+    Begin the game by pressing 'enter'.
+  </p>
 </div>
 <div id="cutris">
 </div>
@@ -93,16 +108,24 @@ window.graphics = new Graphics(game)
 game.graphics = graphics
 graphics.animate()
 graphics.watchWindow()
-game.start()
 
-KeyboardJS.on('up', -> game.move('up'))
-KeyboardJS.on('down', -> game.move('down'))
-KeyboardJS.on('left', -> game.move('left'))
-KeyboardJS.on('right', -> game.move('right'))
-KeyboardJS.on('a', -> game.rotate('roll'))
-KeyboardJS.on('s', -> game.rotate('yaw'))
-KeyboardJS.on('d', -> game.rotate('pitch'))
-KeyboardJS.on('space', -> game.place())
+begin = ->
+  document.getElementById('begin').style.display = 'none'
+  game.start()
+
+  KeyboardJS.on('up', -> game.move('up'))
+  KeyboardJS.on('down', -> game.move('down'))
+  KeyboardJS.on('left', -> game.move('left'))
+  KeyboardJS.on('right', -> game.move('right'))
+  KeyboardJS.on('a', -> game.rotate('roll'))
+  KeyboardJS.on('s', -> game.rotate('yaw'))
+  KeyboardJS.on('d', -> game.rotate('pitch'))
+  KeyboardJS.on('space', -> game.place())
+
+if window.location.search.substring(1) == "again"
+  begin()
+else
+  KeyboardJS.on('enter', begin)
 
 </script>
 </html>
