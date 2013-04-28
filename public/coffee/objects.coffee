@@ -226,9 +226,37 @@ window.Shape = Shape
 
 class LShape extends Shape
   originalShape: -> [
+      [0,0,0]
       [1,1,1]
       [1,0,0]
+    ]
+
+class SShape extends Shape
+  originalShape: -> [
+      [0,1,1]
+      [1,1,0]
       [0,0,0]
     ]
 
-window.LShape = LShape
+class IShape extends Shape
+  originalShape: -> [
+      [0,0,0]
+      [1,1,1]
+      [0,0,0]
+    ]
+
+class OShape extends Shape
+  originalShape: -> [
+      [1,1,0]
+      [1,1,0]
+      [0,0,0]
+    ]
+
+class TShape extends Shape
+  originalShape: -> [
+      [0,0,0]
+      [1,1,1]
+      [0,1,0]
+    ]
+
+window.Shapes = [LShape, TShape, SShape, IShape, OShape]

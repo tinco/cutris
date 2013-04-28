@@ -24,7 +24,8 @@ class Game
 
   nextStep: ->
     if not @activeObject?
-      newObject = new LShape({x: 1, y: 1, z: 12}, @blocks,true)
+      shapeClass = Shapes[Math.floor(Math.random() * Shapes.length)]
+      newObject = new shapeClass({x: 1, y: 1, z: 12}, @blocks,true)
       newObject.id = @lastObjectId
       @lastObjectId += 1
       @activeObject = newObject
@@ -66,13 +67,10 @@ class Game
               @blocks[x][y][z] = undefined
               @blocks[x][y][z-1] = cube
 
-    #
-    #for depth in [0...@DEPTH]
-    depth = 0
-    if isScore(depth)
-      console.log 'is SCORE!'
-      @score += @WIDTH * @HEIGHT * 2
-      decreaseDepth(depth)
+    for depth in [0...@DEPTH]
+      if isScore(depth)
+        @score += @WIDTH * @HEIGHT * 2
+        decreaseDepth(depth)
 
   place: ->
     return if @gameOver
