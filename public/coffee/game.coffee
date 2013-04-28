@@ -103,8 +103,14 @@ class Game
 
     setTimeout((=> @start()),delay) unless @gameOver
 
+    @showEnd() if @gameOver
+
   updateScoreBoard: () ->
-    document.getElementById('score').innerHTML = @score
+    for e in document.getElementsByClassName('score')
+      e.innerHTML = @score
+
+  showEnd: ->
+    document.getElementById('end').style.display = 'block'
 
   move: (direction) ->
     return if @gameOver

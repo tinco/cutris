@@ -18,6 +18,7 @@ canvas {
 body {
     font-family: 'Press Start 2P', cursive;
     color: #229999;
+    text-align: center;
 }
 
 #info {
@@ -32,6 +33,10 @@ h1 {
   font-size: 18pt;
 }
 
+h3 {
+  font-size: 12pt;
+}
+
 #cutris {
   position: absolute;
   top:0;
@@ -39,14 +44,38 @@ h1 {
   left:0;
   right:0;
   margin: 0;
+  z-index: -1;
+}
+
+#end {
+  display: none;
+  width: 30em;
+  height: 10em;
+
+  background-color: white;
+  border: 2px solid #229999;
+
+  margin-top: 15em;
+  margin-left: auto;
+  margin-right: auto;
+
+  padding: 2em;
+  top: 45%;
 }
 </style>
 </head>
 <body>
-<div id="info">
-  <h2>Score: <span id="score">0</div></h2>
+<div id="end">
+  <h2>Game Over</h2>
+  <h3>Well played, you scored: <span class="score">0</span> points!</h3>
+  <div class="restart">
+    <a href="/">play again</a>
+  </div>
 </div>
 <div id="cutris">
+</div>
+<div id="info">
+  <h2>Score: <span class="score">0</div></h2>
 </div>
 </body>
 
