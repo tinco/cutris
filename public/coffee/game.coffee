@@ -19,6 +19,9 @@ class Game
  
   activeObject: undefined
 
+  playSound: (name) ->
+    new Audio('sound/' + name + '.ogg').play()
+
   nextStep: ->
     if not @activeObject?
       newObject = new LShape({x: 1, y: 1, z: 12}, @blocks,true)
@@ -31,8 +34,11 @@ class Game
       if not @activeObject.tryPosition({x: p.x, y: p.y, z: p.z-1})
         @activeObject.active = false
         @activeObject.updateMeshPositions()
+        @score += @activeObject.blocks().length
         @activeObject = undefined
-        @score += 1
+        @playSound('thump')
+        if p.z == Game.DEPTH - 1
+          @gameOver = true
       else
         @activeObject.updateMeshPositions()
 
@@ -69,17 +75,24 @@ class Game
       decreaseDepth(depth)
 
   place: ->
+    return if @gameOver
     while @activeObject?
       @nextStep()
     @resolveScore()
+    @updateScoreBoard()
 
   start: ->
     @nextStep()
     @resolveScore()
+    @updateScoreBoard()
     @graphics.nextStep()
-    setTimeout((=> @start()),1000)
+    setTimeout((=> @start()),1000) unless @gameOver
+
+  updateScoreBoard: () ->
+    document.getElementById('score').innerHTML = @score
 
   move: (direction) ->
+    return if @gameOver
     return if not @activeObject?
     switch direction
       when 'up'
@@ -97,6 +110,7 @@ class Game
       @activeObject.updateMeshPositions()
 
   rotate: (direction) ->
+    return if @gameOver
     return if not @activeObject?
     if @activeObject.rotate(direction)
       @activeObject.updateMeshPositions()
