@@ -23,22 +23,23 @@ class Shape
       @blockShape[i] = []
       for bit,j in row
         if bit == 1
-          @blockShape[i][j] = new Cube()
+          @blockShape[i][j] = [0, new Cube(),0]
         else
-          @blockShape[i][j] = 0
+          @blockShape[i][j] = [0,0,0]
 
     @updatePosition()
     @updateMeshPositions()
 
   updatePosition: ->
     for row,i in @blockShape
-      for cube,j in row
-        if cube != 0
-          p = cube.position
-          @field[p.x]?[p.y]?[p.z] = null
-          p.x = @position.x + j
-          p.y = @position.y + i
-          p.z = @position.z
+      for line,j in row
+        for cube,k in line
+          if cube != 0
+            p = cube.position
+            @field[p.x]?[p.y]?[p.z] = null
+            p.x = @position.x + j
+            p.y = @position.y + i
+            p.z = @position.z - k
 
     for block in @blocks()
       position = block.position
@@ -76,37 +77,55 @@ class Shape
     else
       return true
 
+  pitch: ->
+    pitch = =>
+      rotated = []
+      for i in [0..(@size - 1)]
+        rotated[i] = []
+        for j in [0..(@size - 1)]
+          newX = @size - j - 1
+          rotated[i][j] = @blockShape[@size - j - 1][i]
+      @blockShape = rotated
+
+    pitch()
+    if !@updatePosition()
+      pitch() for [0..2]
+      @updatePosition()
+      return false
+    else
+      return true
+
   updateMeshPositions: () ->
     DX = -(2 * Graphics.BLOCK_SIZE)
     DY = (2 * Graphics.BLOCK_SIZE)
     DZ = -((Game.DEPTH - 1) * Graphics.BLOCK_SIZE)
 
     for row,i in @blockShape
-      for cube,j in row
-        if cube != 0
-          cube.mesh.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
-          cube.mesh.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
-          cube.mesh.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
+      for line,j in row
+        for cube,k in line
+          if cube != 0
+            cube.mesh.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
+            cube.mesh.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
+            cube.mesh.position.z = DZ + Graphics.BLOCK_SIZE * -k + @position.z * Graphics.BLOCK_SIZE
 
+  _blocks: null
   blocks: ->
-    blocks = []
-    for row, i in @blockShape
-      for cube,j in row
-        if cube != 0
-          blocks.push cube
-    blocks
+    return @_blocks if @_blocks?
+    @_blocks = []
+    for row in @blockShape
+      for line in row
+        for cube in line
+          if cube != 0
+            @_blocks.push cube
+    @_blocks
 
   addToScene: (@scene) ->
-    for row in @blockShape
-      for cube in row
-        if cube != 0
-          @scene.add(cube.mesh)
+    for cube in @blocks()
+      @scene.add(cube.mesh)
 
   removeFromScene: (@scene) ->
-    for row in @blockShape
-      for cube in row
-        if cube != 0
-          @scene.remove(cube.mesh)
+    for cube in @blocks()
+      @scene.remove(cube.mesh)
 
 window.Shape = Shape
 
