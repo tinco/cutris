@@ -132,7 +132,6 @@ class Shape
 
   _blocks: null
   blocks: ->
-    return @_blocks if @_blocks?
     @_blocks = []
     for row in @blockShape
       for line in row
