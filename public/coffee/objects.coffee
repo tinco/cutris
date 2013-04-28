@@ -1,4 +1,17 @@
 class Cube
+  @MaterialForDepth = []
+  @Colors = []
+
+  for h in [0..5]
+    @Colors[h] = new THREE.Color()
+    @Colors[h].setHSL(h/5,0.85,0.5)
+
+  for depth in [0..Game.DEPTH]
+    @MaterialForDepth[depth] = new THREE.MeshLambertMaterial(
+      color: @Colors[depth % @Colors.length],
+      wireframe: false
+    )
+
   constructor: ->
     size = Graphics.BLOCK_SIZE
 
@@ -22,6 +35,7 @@ class Cube
     @mesh.position.x = DX + @position.x * Graphics.BLOCK_SIZE
     @mesh.position.y = DY + @position.y * -Graphics.BLOCK_SIZE
     @mesh.position.z = DZ + @position.z * Graphics.BLOCK_SIZE
+    @mesh.material = Cube.MaterialForDepth[@position.z]
 window.Cube = Cube
 
 class Shape
@@ -187,6 +201,7 @@ class Shape
             cube.mesh.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
             cube.mesh.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
             cube.mesh.position.z = DZ + Graphics.BLOCK_SIZE * -k + @position.z * Graphics.BLOCK_SIZE
+            cube.mesh.material = Cube.MaterialForDepth[cube.position.z]
 
   _blocks: null
   blocks: ->

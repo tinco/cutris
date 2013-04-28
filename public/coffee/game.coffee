@@ -30,6 +30,7 @@ class Game
       p = @activeObject.position
       if not @activeObject.tryPosition({x: p.x, y: p.y, z: p.z-1})
         @activeObject = undefined
+        @score += 1
       else
         @activeObject.updateMeshPositions()
 
