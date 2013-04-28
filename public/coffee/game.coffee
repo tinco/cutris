@@ -71,6 +71,7 @@ class Game
 
     for depth in [0...@DEPTH]
       if isScore(depth)
+        @playSound('bump')
         @score += @WIDTH * @HEIGHT * 2
         decreaseDepth(depth)
 
@@ -86,7 +87,21 @@ class Game
     @resolveScore()
     @updateScoreBoard()
     @graphics.nextStep()
-    setTimeout((=> @start()),1000) unless @gameOver
+
+
+    delay = 900
+    if @score > 100
+      delay *= 0.8
+    if @score > 200
+      delay *= 0.8
+    if @score > 400
+      delay *= 0.8
+    if @score > 600
+      delay *= 0.8
+    if @score > 800
+      delay *= 0.8
+
+    setTimeout((=> @start()),delay) unless @gameOver
 
   updateScoreBoard: () ->
     document.getElementById('score').innerHTML = @score
