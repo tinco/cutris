@@ -50,6 +50,7 @@ class Shape
         else
           @blockShape[i][j] = [0,0,0]
 
+    @tryPosition(@position)
     @updateMeshPositions()
 
   isNew: true
@@ -190,18 +191,8 @@ class Shape
     @blockShape = rotated
 
   updateMeshPositions: () ->
-    DX = -(2 * Graphics.BLOCK_SIZE)
-    DY = (2 * Graphics.BLOCK_SIZE)
-    DZ = -((Game.DEPTH - 1) * Graphics.BLOCK_SIZE)
-
-    for row,i in @blockShape
-      for line,j in row
-        for cube,k in line
-          if cube != 0
-            cube.mesh.position.x = DX + Graphics.BLOCK_SIZE * j + @position.x * Graphics.BLOCK_SIZE
-            cube.mesh.position.y = DY + Graphics.BLOCK_SIZE * -i + @position.y * -Graphics.BLOCK_SIZE
-            cube.mesh.position.z = DZ + Graphics.BLOCK_SIZE * -k + @position.z * Graphics.BLOCK_SIZE
-            cube.mesh.material = Cube.MaterialForDepth[cube.position.z]
+    for block in @blocks()
+      block.updateMeshPosition()
 
   _blocks: null
   blocks: ->
