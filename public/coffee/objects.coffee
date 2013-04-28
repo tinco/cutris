@@ -60,40 +60,62 @@ class Shape
     @[direction]()
 
   yaw: ->
-    yaw = =>
-      rotated = []
-      for i in [0..(@size - 1)]
-        rotated[i] = []
-        for j in [0..(@size - 1)]
-          newX = @size - j - 1
-          rotated[i][j] = @blockShape[@size - j - 1][i]
-      @blockShape = rotated
-
-    yaw()
+    @_yaw()
     if !@updatePosition()
-      yaw() for [0..2]
+      @_yaw() for [0..2]
       @updatePosition()
       return false
     else
       return true
 
   pitch: ->
-    pitch = =>
-      rotated = []
-      for i in [0..(@size - 1)]
-        rotated[i] = []
-        for j in [0..(@size - 1)]
-          newX = @size - j - 1
-          rotated[i][j] = @blockShape[@size - j - 1][i]
-      @blockShape = rotated
-
-    pitch()
+    @_yaw()
+    @_rollBack() for [0...3]
     if !@updatePosition()
-      pitch() for [0..2]
+      @_rollBack()
+      @_yaw() for [0...3]
       @updatePosition()
       return false
     else
       return true
+
+  roll: ->
+    @_rollBack() for [0...3]
+    if !@updatePosition()
+      @_rollBack()
+      @updatePosition()
+      return false
+    else
+      return true
+
+  rollBack: ->
+    @_rollBack()
+    if !@updatePosition()
+      @_rollBack() for [0..2]
+      @updatePosition()
+      return false
+    else
+      return true
+
+  _yaw: ->
+     rotated = []
+     for i in [0...@size]
+       rotated[i] = []
+       for j in [0...@size]
+         rotated[i][j] = @blockShape[@size - j - 1][i]
+     @blockShape = rotated
+
+  _rollBack: ->
+    rotated = []
+
+    for k in [0...@size]
+      face = @blockShape[k]
+      for i in [0...@size]
+        rotated[i] = [] if not rotated[i]?
+        for j in [0...@size]
+          rotated[i][j] = [] if not rotated[i][j]?
+          rotated[i][j][k] = face[j][@size - i - 1]
+    @blockShape = rotated
 
   updateMeshPositions: () ->
     DX = -(2 * Graphics.BLOCK_SIZE)
