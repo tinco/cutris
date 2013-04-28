@@ -17,7 +17,7 @@ class Game
       for y in [0...@HEIGHT]
         @blocks[x][y] = []
  
-  activeObject: null
+  activeObject: undefined
 
   nextStep: ->
     if not @activeObject?
@@ -27,26 +27,19 @@ class Game
       @activeObject = newObject
       @playingField[newObject.id] = newObject
     else
-      @activeObject.position.z -= 1
-      if not @activeObject.updatePosition()
-        @activeObject.position.z += 1
-        @activeObject.updatePosition()
-        @activeObject = null
+      p = @activeObject.position
+      if not @activeObject.tryPosition({x: p.x, y: p.y, z: p.z-1})
+        @activeObject = undefined
       else
         @activeObject.updateMeshPositions()
 
   score: 0
   resolveScore: () ->
     isScore = (depth) =>
-      result = ""
       for x in [0...@WIDTH]
         for y in [0...@HEIGHT]
-          result += if @blocks[x][y][depth]? then 1 else 0
-          #if not @blocks[x][y][depth]?
-            #return false
-        result += "\n"
-      console.log result
-      return false
+          if not @blocks[x][y][depth]?
+            return false
       return true
 
     decreaseDepth = (depth) =>
@@ -54,12 +47,12 @@ class Game
         for y in [0...@HEIGHT]
           cube = @blocks[x][y][depth]
           @graphics.scene.remove(cube.mesh)
-          @blocks[x][y][depth] = null
+          @blocks[x][y][depth] = undefined
 
           for z in [(depth + 1)...@DEPTH]
             if cube = @blocks[x][y][z]
               cube.position.z -= 1
-              @blocks[x][y][z] = null
+              @blocks[x][y][z] = undefined
               @blocks[x][y][z-1] = cube
 
     #
@@ -92,11 +85,11 @@ class Game
         key = 'x'; value =  -1
       when 'right'
         key = 'x'; value = 1
-    @activeObject.position[key] += value
-    if !@activeObject.updatePosition()
-      @activeObject.position[key] -= value
-      @activeObject.updatePosition()
-    @activeObject.updateMeshPositions()
+    p = @activeObject.position
+    position = {x: p.x, y: p.y, z: p.z}
+    position[key] += value
+    if @activeObject.tryPosition(position)
+      @activeObject.updateMeshPositions()
 
   rotate: (direction) ->
     return if not @activeObject?

@@ -27,8 +27,55 @@ class Shape
         else
           @blockShape[i][j] = [0,0,0]
 
-    @updatePosition()
     @updateMeshPositions()
+
+  isNew: true
+  tryPosition: (position) ->
+    unless @isNew
+      for block in @blocks()
+        p = block.position
+        @field[p.x][p.y][p.z] = null
+    @isNew = false
+
+    trySpace = =>
+      for row,i in @blockShape
+        for line,j in row
+          for cube,k in line
+            if cube != 0
+              p = {}
+              p.x = position.x + j
+              p.y = position.y + i
+              p.z = position.z - k
+
+              if p.x == -1 ||
+                 p.y == -1 ||
+                 p.z == -1 ||
+                 p.x == Game.WIDTH  ||
+                 p.y == Game.HEIGHT ||
+                 p.z == Game.DEPTH
+                return false
+
+              if @field[p.x][p.y][p.z]?
+                return false
+      return true
+
+    if !trySpace()
+      for block in @blocks()
+        p = block.position
+        @field[p.x][p.y][p.z] = block
+      return false
+
+    for row,i in @blockShape
+      for line,j in row
+        for cube,k in line
+          if cube != 0
+            p = cube.position
+            p.x = position.x + j
+            p.y = position.y + i
+            p.z = position.z - k
+            @field[p.x][p.y][p.z] = cube
+    @position = position
+    true
 
   updatePosition: ->
     for row,i in @blockShape
@@ -36,10 +83,12 @@ class Shape
         for cube,k in line
           if cube != 0
             p = cube.position
-            @field[p.x]?[p.y]?[p.z] = null
+            unless @isNew
+              @field[p.x]?[p.y]?[p.z] = null
             p.x = @position.x + j
             p.y = @position.y + i
             p.z = @position.z - k
+    @isNew = false
 
     for block in @blocks()
       position = block.position
