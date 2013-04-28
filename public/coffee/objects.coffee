@@ -3,7 +3,7 @@ class Cube
   @ActiveMaterialForDepth = []
   @Colors = []
 
-  for h in [0..5]
+  for h in [0...5]
     @Colors[h] = new THREE.Color()
     @Colors[h].setHSL(h/5,0.85,0.5)
 
